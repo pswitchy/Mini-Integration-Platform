@@ -7,26 +7,24 @@ This document outlines the technical architecture, data flow, and design decisio
 The core scenario is: **When a new customer is added to the CRM, a "welcome package" request is created in the Inventory system.**
 
 ## 2. System Architecture
-
-The system consists of three independent components running as Docker containers, orchestrated by Docker Compose.
-
-+--------------------------------------------------------------------------+
-| Your Machine |
-| (Docker Host) |
-| |
-| +-----------------+ +-------------------------+ +-------------------+ |
-| | CRM API | | Integration Service | | Inventory API | |
-| | (Container) |<------->| (Container) |<------>| (Container) | |
-| | Port: 8000 | | (Polling Logic) | | Port: 8001 | |
-| +-----------------+ +-------------------------+ +-------------------+ |
-| ^ ^ ^ ^ |
-| | | | | |
-| User interacts via HTTP ---+ | | | |
-| | | | |
-+------------------------------------+----------+------------------------+-----------+
-| |
-| |
-Reads new customer data -----+ +---- Creates package request
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           Docker Host (Your Machine)                        │
+│                                                                             │
+│  ┌─────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐  │
+│  │   CRM API       │    │  Integration        │    │   Inventory API     │  │
+│  │   Container     │◄──►│  Service Container  │◄──►│   Container         │  │
+│  │                 │    │                     │    │                     │  │
+│  │   Port: 8000    │    │  (Polling Logic)    │    │   Port: 8001        │  │
+│  └─────────────────┘    └─────────────────────┘    └─────────────────────┘  │
+│           ▲                        ▲                         ▲              │
+│           │                        │                         │              │
+└───────────┼────────────────────────┼─────────────────────────┼──────────────┘
+            │                        │                         │
+            │                        │                         │
+   ┌────────▼────────┐      ┌────────▼────────┐       ┌────────▼────────┐
+   │  User HTTP      │      │  Reads new      │       │  Creates package│
+   │  Interactions   │      │  customer data  │       │  requests       │
+   └─────────────────┘      └─────────────────┘       └─────────────────┘
 
 ### 2.1. Components
 
