@@ -28,7 +28,7 @@ For a detailed explanation of the architecture, data flow, and design decisions,
 
 1.  **Clone the repository:**
     ```sh
-    git clone <repository-url>
+    git clone https://github.com/pswitchy/Mini-Integration-Platform.git
     cd mini-integration-platform
     ```
 
